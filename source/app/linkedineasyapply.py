@@ -207,6 +207,10 @@ class LinkedinEasyApply:
                             done_applying = self.apply_to_job()
                             if done_applying:
                                 print(f"Application sent to {company} for the position of {job_title}.")
+                                self.successful_applications += 1
+                                if self.successful_applications >= self.max_applications:
+                                    print(f"Maximum number of applications ({self.max_applications}) reached. Shutting down...")
+                                    return
                                 
                                 # Send message to job poster if the feature is enabled
                                 if self.send_message_to_job_poster:

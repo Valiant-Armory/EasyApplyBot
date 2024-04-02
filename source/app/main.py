@@ -29,7 +29,7 @@ def init_browser():
 
 
 def validate_yaml():
-    with open("C:/Users/kenne/Desktop/EasyApplyBot/config.yaml", 'r') as stream:
+    with open("../config.yaml", 'r') as stream:
         try:
             parameters = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
@@ -65,6 +65,11 @@ def validate_yaml():
     except AssertionError:
         raise Exception("Invalid email address")
 
+    try:
+        assert isinstance(parameters['maxApplications'], int) and parameters['maxApplications'] > 0
+    except AssertionError:
+        raise Exception("'maxApplications' must be a positive integer")
+        
     try:
         assert len(str(parameters['password'])) > 0
     except AssertionError:
