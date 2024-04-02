@@ -2,6 +2,7 @@
 # Add your LinkedIn email ID and password.
 email: email@gmail.com
 password: password123
+maxApplications: 10 #Max number of successful applications to run before the bot shuts off.
 
 # Anti-lock default is False
 disableAntiLock: false
