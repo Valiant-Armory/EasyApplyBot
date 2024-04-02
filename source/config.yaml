@@ -1,25 +1,25 @@
-# Add your LinkedIn email ID and password. WARNING: KEEP THIS OFFLINE ON YOUR PC AND DO NOT COMMIT/UPLOAD.
-email: email@domain.com
-password: yourpassword
+---
+# Add your LinkedIn email ID and password.
+email: email@gmail.com
+password: password123
 
-# Anti-lock default is False to prevent your PC from sleeping to allow bot to run uninterrupted.
-# Set it to True if you wish to disable this functionality.
-disableAntiLock: False
+# Anti-lock default is False
+disableAntiLock: false
 
 # Set to True if you wish to search for remote jobs only.
-remote: False
+remote: false
 
 # Set to True if you wish to search for jobs marked as "under 10 applicants" (default is False).
-lessthanTenApplicants: False
+lessthanTenApplicants: false
 
 # Set to True or False to suit your preference. Multiple True allowed.
 experienceLevel:
- internship: False
- entry: True
- associate: True
- mid-senior level: True
- director: False
- executive: False
+ internship: false
+ entry: true
+ associate: true
+ mid-senior level: true
+ director: false
+ executive: false
 
 # Set to True or False to suit your preference. Multiple True allowed.
 jobTypes:
@@ -40,21 +40,21 @@ date:
 
 # Remove hash sign to add positions. You can add as many as you need, but preserve formatting
 positions:
- #- First position
- #- A second position
- #- A third position
+ - IT Tech
+ - Programmer
+ - Helpdesk
  #- ...
 
 # Remove hash sign to add locations. You can add as many as you need including adding 'Remote' as a location but first location must be a valid country.
 locations:
- #- First location
+ - United States
  #- A second location
  #- A third location
  #- ...
- #- Remote
+ - Remote
 
 # Set to True if you are residing in the country of job
-residentStatus: False
+residentStatus: True
 
 # Distance from the location added above. Allowed values are {0, 5, 10, 25, 50, 100}, use only one.
 distance: 100
@@ -64,7 +64,7 @@ outputFileDirectory: ~/Documents/Applications/EasyApplyBot/EasyApplyBot/
 
 # Companies you don't want to apply.
 companyBlacklist:
- #- company
+ #- company1
  #- company2
 
 # Job titles you want to avoid applying. Use it to refine performance of bot.
@@ -78,10 +78,10 @@ posterBlacklist:
  #- name2
 
 # Path to your CV/resume and cover letter (remove hash sign). These paths often don't work
-# so apply one job manually once, bot will reuse manually uploaded CV for automating the task.
+
 # Note: Prefer a path without spaces, i.e. instead of "Me My" to "MeMy" or "Me_My".
 uploads:
- resume: C:\Users\myDirectory\Resume.pdf
+ resume: c:\Users\Desktop\Resume
  # Cover letter is optional
  #coverLetter: C:\Users\myDirectory\CoverLettter.pdf
 
@@ -92,6 +92,8 @@ uploads:
 checkboxes:
  # Do you have a valid driver's license? (yes/no checkbox)
  driversLicence: True
+ # Set to True if you want to send a message to the job poster after applying
+ SendMessageToJobPoster: True
  # Will you now, or in the future, require sponsorship for employment visa status (e.g. H-1B visa status)? (yes/no checkbox)
  # This is relative to the location and your citizenship applying above, and same with legallyAuthorized.
  requireVisa: False
@@ -113,28 +115,38 @@ checkboxes:
  securityClearance: False
  # Have you completed the following level of education: DEGREE TYPE? Remove applicable # signs (yes/no checkbox)
  degreeCompleted:
-   - High School Diploma
-   - Bachelor's Degree
-  # - Associate's Degree
-  # - Master's Degree
+  - High School Diploma
+  - Bachelor's Degree
+  - Associate's Degree
+  - Master's Degree
   # - Master of Business Administration
   # - Doctor of Philosophy
   # - Doctor of Medicine
   # - Doctor of Law
+ # Default Answer For are you able to, can you, will you? (yes/no checkbox)
+ AbilityQuestion: True
+ # Are you Covid Vaccinated, willing to be vaccinated? (yes/no checkbox)
+ CovidVaccination: False
+ # Default Answer For were you previously employed? (yes/no checkbox)
+ PreviouslyEmployed: False
+ # Default Answer For do you know someone that works here? (yes/no checkbox)
+ KnowSomeoneHere: False
+ # Default Answer For are you all licensed/certified? (yes/no checkbox)
+ CertifiedorLicensed: False
  # Are you willing to undergo a background check, in accordance with local law/regulations?
- backgroundCheck: True
+ backgroundCheck: False
 
 # ------------ Additional parameters: universityGpa ---------------
-universityGpa: 4.0
+universityGpa: 3.0
 
 # ------------ Additional parameters: salaryMinimum ---------------
-salaryMinimum: 65000
+salaryMinimum: 106000
 
 # ------------ Additional parameters: languages ---------------
 languages:
  english: Native or bilingual # Allowed choices { None, Conversational, Professional, Native or bilingual }
- # arabic: Conversational
- # french: Professional
+ # arabic:
+ # french:
 
 # ------------ Additional parameters: noticePeriod in weeks ---------------
 noticePeriod: 2
@@ -143,88 +155,228 @@ noticePeriod: 2
 # How many years of work experience do you have ...? (whole numbers only)
 # You may add more skills depending on your industry or profession at the bottom.
 experience:
- # normal ones
- Accounting/Auditing: 0
- Administrative : 0
- Advertising : 0
- Analyst : 0
- Art/Creative: 0
- Business Development: 0
- Consulting: 0
- Customer Service: 0
- Distribution Design: 0
- Education: 0
- Engineering: 0
- Finance: 0
- General Business: 0
- Health Care Provider: 0
- Human Resources: 0
- Information Technology: 0
- Legal: 0
- Management: 0
- Manufacturing: 0
- Marketing: 0
- Public Relations: 0
- Purchasing: 0
- Product Management: 0
- Project Management: 0
- Production: 0
- Quality Assurance: 0
- Research: 0
- Sales: 0
- Science: 0
- Strategy/Planning: 0
- Supply Chain: 0
- Training: 0
- Writing/Editing: 0
- VBA: 0
- PowerBI: 0
- PowerQuery: 0
- Excel: 0
- PowerPoint: 0
- Word: 0
- SQL Server: 0
- Communication: 0
- Financial markets: 0
- Business: 0
- Financial services: 0
- Team leadership: 0
- Cash flow: 0
- Hedging: 0
- Treasury services: 0
- Microsoft Power BI: 0
- Accounting: 0
- Auditing: 0
- Financial modeling: 0
- Budgeting & forecasting: 0
- FP&A: 0
- PQE: 0
- Training & Development: 0
- #python: 0
- #selenium: 0
- # default to put for any industry/skill that you did not list
- default: 0
+ Accounting/Auditing: 4
+ Administrative: 4
+ Advertising: 4
+ Analyst: 4
+ Art/Creative: 4
+ Business Development: 4
+ Consulting: 4
+ Customer Service: 4
+ Distribution Design: 4
+ Education: 4
+ Engineering: 4
+ Finance: 4
+ General Business: 4
+ Health Care Provider: 4
+ Human Resources: 4
+ Information Technology: 4
+ Legal: 4
+ Management: 4
+ Manufacturing: 4
+ Marketing: 4
+ Public Relations: 4
+ Purchasing: 4
+ Product Management: 4
+ Project Management: 4
+ Production: 4
+ Quality Assurance: 4
+ Research: 4
+ Sales: 4
+ Science: 4
+ Strategy/Planning: 4
+ Supply Chain: 4
+ Training: 4
+ Writing/Editing: 4
+ VBA: 4
+ PowerBI: 4
+ PowerQuery: 4
+ Excel: 4
+ PowerPoint: 4
+ Word: 4
+ SQL Server: 4
+ Communication: 4
+ Financial markets: 4
+ Business: 4
+ Financial services: 4
+ Team leadership: 4
+ Cash flow: 4
+ Hedging: 4
+ Treasury services: 4
+ Microsoft Power BI: 4
+ Accounting: 4
+ Auditing: 4
+ Financial modeling: 4
+ Budgeting & forecasting: 4
+ FP&A: 4
+ PQE: 4
+ Training & Development: 4
+ default: 4 # default to put for any industry/skill that you did not list
 
 # ------------ Additional parameters: personal info ---------------
 personalInfo:
  Pronouns: Mr.
- First Name: FirstName
- Last Name: LastName
- Phone Country Code: Canada (+1) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
- Mobile Phone Number: 1234567890
- Street address: 123 Fake Street
- City: Red Deer, Alberta # Include the state/province as well!
- State: YourState
- Zip: YourZip/Postal
- Linkedin: https://www.linkedin.com/in/my-linkedin-profile
- Website: https://www.my-website.com # github/website is interchangeable here
- MessageToManager: "Hi, I am interested to join your organization. Please have a look at my resume. Thank you." # Keep message short and within the quotes. This is a testing feature and may not work.
+ First Name: firstname
+ Last Name: lastname
+ Phone Country Code: United States (+1) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
+ Mobile Phone Number: (555) 555-5555
+ Street address: 
+ City: City, State # Include the state/province as well!
+ State: 
+ Zip: 
+ Linkedin: url
+ Website: url # github/website is interchangeable here
+ MessageToManager: "I hope this message finds you well. I recently applied for the a position with you through LinkedIn, and I wanted to express my gratitude for considering my application. I am genuinely excited about the opportunity to contribute to your team and leverage my skills and experience in technology. I believe my background aligns well with the requirements outlined in the job posting, and I am eager to discuss how I can bring value to your client. Please feel free to reach out if you need any further information or would like to schedule an interview. I am available at your convenience. Best regards, Kenneth Kroeker" 
+# Keep message short and within the quotes. This is a testing feature and may not work.
 
 # ------------ Additional parameters: USA employment crap ---------------
 eeo:
- gender: None
- race: None
- veteran: None
- disability: None
+ gender: Prefer Not to Say
+ race: Prefer Not to Say
+ veteran: Prefer Not to Say
+ disability: Prefer Not to Say
  citizenship: yes
  clearance: no
+
+ # ------------ Additional parameters: technology skills ---------------
+technology:
+ linux: True
+ unix: True
+ windows: True
+ macos: True
+ vmware: True
+ hyperv: True
+ aws: True
+ azure: True
+ gcp: True
+ ibm_cloud: True
+ docker: True
+ kubernetes: True
+ openshift: True
+ ansible: True
+ puppet: True
+ chef: True
+ terraform: True
+ jenkins: True
+ gitlab: True
+ circleci: True
+ travisci: True
+ bamboo: True
+ nagios: True
+ zabbix: True
+ splunk: True
+ elk_stack: True
+ python: True
+ java: True
+ c_sharp: True
+ php: True
+ ruby: True
+ go: True
+ rust: True
+ javascript: True
+ typescript: True
+ nodejs: True
+ angular: True
+ react: True
+ vuejs: True
+ django: True
+ flask: True
+ spring: True
+ dotnet: True
+ laravel: True
+ rails: True
+ express: True
+ mysql: True
+ postgresql: True
+ mongodb: True
+ cassandra: True
+ redis: True
+ oracle_db: True
+ mssql: True
+ git: True
+ svn: True
+ mercurial: True
+ jira: True
+ confluence: True
+ trello: True
+ slack: True
+ microsoft_teams: True
+
+# ------------ Additional parameters: infrastructure skills ---------------
+infrastructure:  
+ data centers: True
+ server: True
+ network: True
+ telecom: True
+
+# ------------ Additional parameters: operations ---------------
+operations:
+ it operations: True
+
+# ------------ Additional parameters: industry experience ---------------
+industryExperience:
+ healthcare: True
+ finance: True
+ insurance: True
+ retail: True
+ hospitality: True
+ telecommunications: True
+
+# ------------ Additional parameters: travel ---------------
+travel:
+ # Percentage willing to travel
+ percentage: 25
+ # Willing to relocate
+ relocation: False
+
+# ------------ Additional parameters: certifications ---------------
+certifications:
+ itil: False
+ pmp: False
+ cissp: False
+ aws_certified_cloud_practitioner: False
+ aws_certified_solutions_architect: False
+ aws_certified_developer: False
+ aws_certified_sysops_administrator: False
+ aws_certified_devops_engineer: False
+ microsoft_azure_fundamentals: False
+ microsoft_azure_administrator: False
+ microsoft_azure_developer: False
+ microsoft_azure_solutions_architect: False
+ microsoft_azure_devops_engineer: False
+ comptia_a_plus: False
+ comptia_network_plus: False
+ comptia_security_plus: False
+ comptia_linux_plus: False
+ comptia_server_plus: False
+ comptia_cloud_plus: False
+ comptia_cysa_plus: False
+ comptia_pentest_plus: False
+ cisco_ccna: False
+ cisco_ccnp: False
+ cisco_ccie: False
+ vmware_vcta: False
+ vmware_vcp: False
+ vmware_vcix: False
+ vmware_vcap: False
+ vmware_vcdx: False
+ lpi_linux_essentials: False
+ lpi_lpic_1: False
+ lpi_lpic_2: False
+ lpi_lpic_3: False
+ oracle_oca: False
+ oracle_ocp: False
+ oracle_ocm: False
+ redhat_rhcsa: False
+ redhat_rhce: False
+ redhat_rhca: False
+ istqb_foundation: False
+ istqb_advanced: False
+ istqb_expert: False
+ pmi_capm: False
+ pmi_pgmp: False
+ scrum_alliance_csm: False
+ scrum_alliance_csd: False
+ scrum_alliance_cspo: False
+ scrum_alliance_csp: False
+# Add additonal certs here
