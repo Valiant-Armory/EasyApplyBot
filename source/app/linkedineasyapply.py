@@ -30,12 +30,14 @@ class LinkedinEasyApply:
         else:
             self.cover_letter_dir = ''
         self.checkboxes = parameters.get('checkboxes', [])
+        self.send_message_to_job_poster = self.checkboxes['SendMessageToJobPoster']
         self.university_gpa = parameters['universityGpa']
         self.salary_minimum = parameters['salaryMinimum']
         self.notice_period = int(parameters['noticePeriod'])
         self.languages = parameters.get('languages', [])
         self.experience = parameters.get('experience', [])
         self.personal_info = parameters.get('personalInfo', [])
+        self.message_to_manager = self.personal_info['MessageToManager']
         self.eeo = parameters.get('eeo', [])
         self.experience_default = int(self.experience['default'])
 
@@ -109,128 +111,136 @@ class LinkedinEasyApply:
                 page_sleep += 1
 
     def apply_jobs(self, location):
-        no_jobs_text = ""
-        try:
-            no_jobs_element = self.browser.find_element(By.CLASS_NAME,
-                                                        'jobs-search-two-pane__no-results-banner--expand')
-            no_jobs_text = no_jobs_element.text
-        except:
-            pass
-        if 'No matching jobs found' in no_jobs_text:
-            raise Exception("No more jobs on this page.")
+            no_jobs_text = ""
+            try:
+                no_jobs_element = self.browser.find_element(By.CLASS_NAME,
+                                                            'jobs-search-two-pane__no-results-banner--expand')
+                no_jobs_text = no_jobs_element.text
+            except:
+                pass
+            if 'No matching jobs found' in no_jobs_text:
+                raise Exception("No more jobs on this page.")
 
-        if 'unfortunately, things are' in self.browser.page_source.lower():
-            raise Exception("No more jobs on this page.")
+            if 'unfortunately, things are' in self.browser.page_source.lower():
+                raise Exception("No more jobs on this page.")
 
-        job_results_header = ""
-        maybe_jobs_crap = ""
-        job_results_header = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list__text")
-        maybe_jobs_crap = job_results_header.text
+            job_results_header = ""
+            maybe_jobs_crap = ""
+            job_results_header = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list__text")
+            maybe_jobs_crap = job_results_header.text
 
-        if 'Jobs you may be interested in' in maybe_jobs_crap:
-            raise Exception("Nothing to do here, moving forward...")
+            if 'Jobs you may be interested in' in maybe_jobs_crap:
+                raise Exception("Nothing to do here, moving forward...")
 
-        try:
-            job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
-            self.scroll_slow(job_results)
-            self.scroll_slow(job_results, step=300, reverse=True)
+            try:
+                job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
+                self.scroll_slow(job_results)
+                self.scroll_slow(job_results, step=300, reverse=True)
 
-            job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(
-                By.CLASS_NAME, 'jobs-search-results__list-item')
+                job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(
+                    By.CLASS_NAME, 'jobs-search-results__list-item')
+                if len(job_list) == 0:
+                    raise Exception("No job class elements found in page")
+            except:
+                raise Exception("No more jobs on this page.")
+
             if len(job_list) == 0:
-                raise Exception("No job class elements found in page")
-        except:
-            raise Exception("No more jobs on this page.")
+                raise Exception("No more jobs on this page.")
 
-        if len(job_list) == 0:
-            raise Exception("No more jobs on this page.")
+            for job_tile in job_list:
+                job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
 
-        for job_tile in job_list:
-            job_title, company, poster, job_location, apply_method, link = "", "", "", "", "", ""
-
-            try:
-                job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text
-                link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').get_attribute('href').split('?')[0]
-            except:
-                pass
-            try:
-                company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text
-            except:
-                pass
-            try:
-                # get the name of the person who posted for the position, if any is listed
-                hiring_line = job_tile.find_element(By.XPATH, '//span[contains(.,\' is hiring for this\')]')
-                hiring_line_text = hiring_line.text
-                name_terminating_index = hiring_line_text.find(' is hiring for this')
-                if name_terminating_index != -1:
-                    poster = hiring_line_text[:name_terminating_index]
-            except:
-                pass
-            try:
-                job_location = job_tile.find_element(By.CLASS_NAME, 'job-card-container__metadata-item').text
-            except:
-                pass
-            try:
-                apply_method = job_tile.find_element(By.CLASS_NAME, 'job-card-container__apply-method').text
-            except:
-                pass
-
-            contains_blacklisted_keywords = False
-            job_title_parsed = job_title.lower().split(' ')
-
-            for word in self.title_blacklist:
-                if word.lower() in job_title_parsed:
-                    contains_blacklisted_keywords = True
-                    break
-
-            if company.lower() not in [word.lower() for word in self.company_blacklist] and \
-                    poster.lower() not in [word.lower() for word in self.poster_blacklist] and \
-                    contains_blacklisted_keywords is False and link not in self.seen_jobs:
                 try:
-                    max_retries = 3
-                    retries = 0
-                    while retries < max_retries:
-                        try:
-                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
-                            job_el.click()
-                            break
+                    job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text
+                    link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').get_attribute('href').split('?')[0]
+                except:
+                    pass
+                try:
+                    company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text
+                except:
+                    pass
+                try:
+                    # get the name of the person who posted for the position, if any is listed
+                    hiring_line = job_tile.find_element(By.XPATH, '//span[contains(.,\' is hiring for this\')]')
+                    hiring_line_text = hiring_line.text
+                    name_terminating_index = hiring_line_text.find(' is hiring for this')
+                    if name_terminating_index != -1:
+                        poster = hiring_line_text[:name_terminating_index]
+                except:
+                    pass
+                try:
+                    job_location = job_tile.find_element(By.CLASS_NAME, 'job-card-container__metadata-item').text
+                except:
+                    pass
+                try:
+                    apply_method = job_tile.find_element(By.CLASS_NAME, 'job-card-container__apply-method').text
+                except:
+                    pass
 
-                        except StaleElementReferenceException:
-                            retries += 1
-                            continue
+                contains_blacklisted_keywords = False
+                job_title_parsed = job_title.lower().split(' ')
 
-                    time.sleep(random.uniform(3, 5))
+                for word in self.title_blacklist:
+                    if word.lower() in job_title_parsed:
+                        contains_blacklisted_keywords = True
+                        break
 
+                if company.lower() not in [word.lower() for word in self.company_blacklist] and \
+                        poster.lower() not in [word.lower() for word in self.poster_blacklist] and \
+                        contains_blacklisted_keywords is False and link not in self.seen_jobs:
                     try:
-                        done_applying = self.apply_to_job()
-                        if done_applying:
-                            print(f"Application sent to {company} for the position of {job_title}.")
-                        else:
-                            print(f"An application for a job at {company} has been submitted earlier.")
-                    except:
-                        temp = self.file_name
-                        self.file_name = "../failed_"
-                        print("Failed to apply to job. Please submit a bug report with this link: " + link)
+                        max_retries = 3
+                        retries = 0
+                        while retries < max_retries:
+                            try:
+                                job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                                job_el.click()
+                                break
+
+                            except StaleElementReferenceException:
+                                retries += 1
+                                continue
+
+                        time.sleep(random.uniform(3, 5))
+
+                        try:
+                            done_applying = self.apply_to_job()
+                            if done_applying:
+                                print(f"Application sent to {company} for the position of {job_title}.")
+                                
+                                # Send message to job poster if the feature is enabled
+                                if self.send_message_to_job_poster:
+                                    try:
+                                        poster_profile_url = job_tile.find_element(By.CLASS_NAME, 'job-card-container__company-name').get_attribute('href')
+                                        self.send_message_to_poster(poster_profile_url)
+                                    except:
+                                        print("Failed to find poster profile URL.")
+                            else:
+                                print(f"An application for a job at {company} has been submitted earlier.")
+                        except:
+                            temp = self.file_name
+                            self.file_name = "../failed_"
+                            print("Failed to apply to job. Please submit a bug report with this link: " + link)
+                            try:
+                                self.write_to_file(company, job_title, link, job_location, location)
+                            except:
+                                pass
+                            self.file_name = temp
+
                         try:
                             self.write_to_file(company, job_title, link, job_location, location)
-                        except:
-                            pass
-                        self.file_name = temp
-
-                    try:
-                        self.write_to_file(company, job_title, link, job_location, location)
-                    except Exception:
-                        print(
-                            "Unable to save the job information in the file. The job title or company cannot contain special characters,")
+                        except Exception:
+                            print(
+                                "Unable to save the job information in the file. The job title or company cannot contain special characters,")
+                            traceback.print_exc()
+                    except:
                         traceback.print_exc()
-                except:
-                    traceback.print_exc()
-                    print(f"Could not apply to the job in {company}")
-                    pass
-            else:
-                print(f"Job for {company} by {poster} contains a blacklisted word {word}.")
+                        print(f"Could not apply to the job in {company}")
+                        pass
+                else:
+                    print(f"Job for {company} by {poster} contains a blacklisted word {word}.")
 
-            self.seen_jobs += link
+                self.seen_jobs += link
 
     def apply_to_job(self):
         easy_apply_button = None
@@ -313,6 +323,22 @@ class LinkedinEasyApply:
             raise Exception("Could not close the applied confirmation window!")
 
         return True
+    
+    def send_message_to_poster(self):
+        try:
+            message_button = self.browser.find_element(By.XPATH, '//button[contains(@class, "artdeco-button") and contains(@class, "artdeco-button--secondary") and contains(span, "Message")]')
+            message_button.click()
+            time.sleep(random.uniform(3, 5))
+
+            message_textbox = self.browser.find_element(By.XPATH, '//textarea[contains(@class, "send-invite-message")]')
+            message_textbox.send_keys(self.message_to_manager)
+            time.sleep(random.uniform(2, 4))
+
+            send_button = self.browser.find_element(By.XPATH, '//button[contains(@class, "send-invite__send-button")]')
+            send_button.click()
+            time.sleep(random.uniform(2, 4))
+        except Exception as e:
+            print(f"Failed to send message to poster: {e}")
 
     def home_address(self, element):
         try:
@@ -428,10 +454,104 @@ class LinkedinEasyApply:
 
                     elif 'sponsor' in radio_text:
                         answer = self.get_answer('requireVisa')
-                    else:
-                        answer = radio_options[len(radio_options) - 1]
-                        self.record_unprepared_question("radio", radio_text)
 
+                    elif any(phrase in radio_text for phrase in ['are you able to', 'can you', 'will you']):
+                        answer = 'yes' if self.checkboxes['AbilityQuestion'] else 'no'
+                        
+                    elif any(phrase in radio_text for phrase in ['covid', 'coronavirus', 'vaccinated', 'vaccination']):
+                        answer = 'yes' if self.checkboxes['CovidVaccination'] else 'no'
+            
+                    elif any(phrase in radio_text for phrase in ['have you ever worked for', 'previously employed', 'previous employment']):
+                        answer = 'yes' if self.checkboxes['PreviouslyEmployed'] else 'no'
+                        
+                    elif any(phrase in radio_text for phrase in ['do you know anyone at', 'related', 'relationship', 'know someone at']):
+                        answer = 'yes' if self.checkboxes['KnowSomeoneHere'] else 'no'
+                        
+                    elif any(phrase in radio_text for phrase in ['certificate', 'certified', 'license', 'certification', 'licensed']):
+                        answer = 'yes' if self.checkboxes['CertifiedorLicensed'] else 'no'
+              
+                    elif 'years of work experience' in question_text:
+                        for technology in self.technology:
+                            if technology.lower() in question_text and self.technology[technology]:
+                                no_of_years = 3 # or whatever default years you want to input
+                                to_enter = no_of_years
+                                break
+
+                    elif any(skill in question_text for skill in ['infrastructure', 'data center', 'server', 'network']): 
+                        for infra in self.infrastructure:
+                            if infra in question_text and self.infrastructure[infra]:
+                                answer = 'yes'
+                                break
+                        else:
+                            answer = 'no'
+
+                        choice = ""    
+                        for option in options:
+                            if answer in option.lower():
+                                choice = option
+                        if choice == "":
+                            choice = options[len(options)-1]
+                        self.select_dropdown(dropdown_field, choice)
+
+                    elif 'it operations' in question_text:
+                        answer = 'yes' if self.operations['it operations'] else 'no'
+                        choice = ""
+                        for option in options:
+                            if answer in option.lower():
+                                choice = option
+                        if choice == "":
+                            choice = options[len(options)-1]                    
+                        self.select_dropdown(dropdown_field, choice)
+
+                    elif any(industry in question_text for industry in self.industry_experience):
+                        answer = 'yes'
+                        for industry in self.industry_experience:
+                            if industry in question_text and not self.industry_experience[industry]:
+                                answer = 'no' 
+                                break
+
+                        choice = ""
+                        for option in options:
+                            if answer in option.lower():
+                                choice = option
+                        if choice == "":
+                            choice = options[len(options)-1]
+                        self.select_dropdown(dropdown_field, choice)
+
+                    elif 'travel' in question_text:
+                        travel_perc = self.travel['percentage']
+                        choice = next((opt for opt in options if str(travel_perc) in opt), None)
+                        if not choice:
+                            choice = options[-1] 
+                        self.select_dropdown(dropdown_field, choice)
+
+                    elif 'relocate' in question_text:
+                        answer = 'yes' if self.travel['relocation'] else 'no'
+                        choice = next((opt for opt in options if answer in opt.lower()), options[-1])
+                        self.select_dropdown(dropdown_field, choice)
+
+                    elif 'certification' in question_text:
+                        answer = 'yes'
+                        for cert in self.certifications:
+                            if cert in question_text and not self.certifications[cert]:
+                                answer = 'no'
+                                break
+                        
+                        choice = ""
+                        for option in options:
+                            if answer in option.lower():
+                                choice = option
+                        if choice == "":
+                            choice = options[len(options)-1] 
+                        self.select_dropdown(dropdown_field, choice)              
+                                
+                    else:
+                            # Default case: Assume "yes" for yes or no questions
+                            if any(option.lower() in ['yes', 'no'] for option in radio_options):
+                                answer = 'yes'
+                            else:
+                                answer = radio_options[len(radio_options) - 1]
+                                
                     i = 0
                     to_select = None
                     for radio in radios:

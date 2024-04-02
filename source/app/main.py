@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from validate_email import validate_email
 from webdriver_manager.chrome import ChromeDriverManager
 from linkedineasyapply import LinkedinEasyApply
-
+import sys
 
 def init_browser():
     browser_options = Options()
@@ -21,7 +21,7 @@ def init_browser():
         browser_options.add_argument(option)
 
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=browser_options,)
+    driver = webdriver.Chrome(service=service, options=browser_options)
     driver.implicitly_wait(1) # wait time in seconds to allow loading of elements
     driver.set_window_position(0, 0)
     driver.maximize_window()
@@ -29,11 +29,11 @@ def init_browser():
 
 
 def validate_yaml():
-    with open("../config.yaml", 'r') as stream:
+    with open("C:/Users/kenne/Desktop/EasyApplyBot/config.yaml", 'r') as stream:
         try:
             parameters = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
-            raise exc
+            raise Exception(f"Error while parsing YAML file: {exc}")
 
     mandatory_params = ['email',
                         'password',
@@ -58,7 +58,49 @@ def validate_yaml():
 
     for mandatory_param in mandatory_params:
         if mandatory_param not in parameters:
-            raise Exception(mandatory_param + ' is not defined in the config.yaml file!')
+            raise Exception(f"Missing mandatory parameter: {mandatory_param}")
+
+    try:
+        assert validate_email(parameters['email'])
+    except AssertionError:
+        raise Exception("Invalid email address")
+
+    try:
+        assert len(str(parameters['password'])) > 0
+    except AssertionError:
+        raise Exception("Password cannot be empty")
+
+    boolean_params = ['disableAntiLock', 'remote', 'lessthanTenApplicants', 'residentStatus']
+    for param in boolean_params:
+        try:
+            assert isinstance(parameters[param], bool)
+        except AssertionError:
+            raise Exception(f"Parameter '{param}' must be a boolean value")
+
+    experience_level = parameters.get('experienceLevel', [])
+    if not any(experience_level.values()):
+        raise Exception("At least one experience level must be set to True")
+
+    job_types = parameters.get('jobTypes', [])
+    if not any(job_types.values()):
+        raise Exception("At least one job type must be set to True")
+
+    date = parameters.get('date', [])
+    if sum(date.values()) != 1:
+        raise Exception("Exactly one date option must be set to True")
+
+    approved_distances = {0, 5, 10, 25, 50, 100}
+    if parameters['distance'] not in approved_distances:
+        raise Exception(f"Invalid distance value: {parameters['distance']}. Allowed values are {approved_distances}")
+
+    if len(parameters['positions']) == 0:
+        raise Exception("At least one position must be specified")
+
+    if len(parameters['locations']) == 0:
+        raise Exception("At least one location must be specified")
+
+    if 'resume' not in parameters['uploads']:
+        raise Exception("Resume file path must be provided in the 'uploads' section")
 
     assert validate_email(parameters['email'])
     assert len(str(parameters['password'])) > 0
@@ -134,10 +176,26 @@ def validate_yaml():
     return parameters
 
 if __name__ == '__main__':
-    parameters = validate_yaml()
-    browser = init_browser()
+    try:
+        parameters = validate_yaml()
+    except Exception as e:
+        print(f"Validation failed: {str(e)}")
+        sys.exit(1)
+
+    try:
+        browser = init_browser()
+    except Exception as e:
+        print(f"Failed to initialize browser: {str(e)}")
+        sys.exit(1)
 
     bot = LinkedinEasyApply(parameters, browser)
-    bot.login()
-    bot.security_check()
-    bot.start_applying()
+
+    try:
+        bot.login()
+        bot.security_check()
+        bot.start_applying()
+    except Exception as e:
+        print(f"An error occurred during execution: {str(e)}")
+        sys.exit(1)
+    finally:
+        browser.quit()
