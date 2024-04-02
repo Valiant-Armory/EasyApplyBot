@@ -50,9 +50,8 @@ This guide will walk you through the process of setting up a Python 3.10 project
 
 6. Clone the EASYAPPLYBOT repository from GitHub using the following command:
    ```powershell
-   git clone https://github.com/username/EASYAPPLYBOT.git
+   git clone https://github.com/Valiant-Armory/EasyApplyBot
    ```
-   Replace `username` with the actual username of the repository owner.
 
 7. Navigate to the cloned repository folder:
    ```powershell
@@ -69,7 +68,6 @@ This guide will walk you through the process of setting up a Python 3.10 project
    ```powershell
    python main.py
    ```
-   Make sure to replace `main.py` with the actual name of the main Python file in the EASYAPPLYBOT project.
 
 That's it! You have now successfully set up a Python 3.10 project in VSCode on Windows and installed the required dependencies for the EASYAPPLYBOT GitHub project using the PowerShell terminal.
 
